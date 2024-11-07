@@ -9,13 +9,13 @@ import{
 } from 'recharts'
 import color from'tailwindcss/colors'
 const data =[
-    { date : '10/12', revenue:29110 },
-    {  date : '12/12', revenue:3200 },
-      {date : '12/12', revenue:1200},
-      {date : '13/12', revenue:12500},
-      { date : '14/12', revenue:2200},
-      {date : '15/12', revenue:5200},
-      {date : '16/12', revenue:8230}
+    { date : '10/12', revenue:29110},
+    {  date : '12/12', revenue:3200},
+    {date : '12/12', revenue:1200},
+    {date : '13/12', revenue:12500},
+    { date : '14/12', revenue:2200},
+    {date : '15/12', revenue:5200},
+    {date : '16/12', revenue:8230}
 ]
 
 export function RevenueChart(){

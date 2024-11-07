@@ -4,11 +4,13 @@ import { Label } from "@radix-ui/react-label";
 import { useForm} from 'react-hook-form'
 import {z} from 'zod'
 import {toast} from'sonner'
-import { Link, useNavigate } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { registerRestaurant} from "@/api/registerRestaurant";
 
 const SignUpForm =z.object({
-    restaurantName:z.string(),
-    managerName : z.string(),
+    restaurant_name:z.string(),
+    name: z.string(),
     phone:z.string(),
     email:z.string().email()
 })
@@ -17,26 +19,38 @@ type SignUpFormInputs = z.infer< typeof SignUpForm>
 
 
 export function SignUp(){
+
    const navigate = useNavigate()
+
    const { register, handleSubmit ,reset, formState:{isSubmitting}} = useForm<SignUpFormInputs>()
+   const { mutateAsync: registerRestaurantFn} = useMutation({
+    mutationFn : registerRestaurant
+   })
 
    async function handleSignUp(data:SignUpFormInputs)
-    {
+   {
+      
         
-        console.log(data)
+      function refresh(){
+        navigate(`/sign-in?email=${data.email}`)
+       }
         
         try{
+          await registerRestaurantFn({
+            email:data.email,
+            phone:data.phone,
+            name:data.name,
+            restaurant_name:data.restaurant_name
+          })
                         
                         
                         toast.success('Enviamos um Link de autenticação',{
                            action:{
-                              label:'Login',
-                              onClick:()=>navigate('/sign-in')
+                              label:'login',
+                              onClick:()=>refresh()
                           }
                        })
                         reset()
-
-                       await new Promise((resolve)=>setTimeout(resolve,2000))
 
         }catch{
          toast.error('Credenciais inválidas')
@@ -60,7 +74,7 @@ export function SignUp(){
             <form action="" className="space-y-4" onSubmit={handleSubmit(handleSignUp)}>
                 <div className="space-y-2">
                   <Label  htmlFor='' />
-                  <Input id='restaurantName' placeholder="Nome do restaurante" type="text" required {...register('restaurantName')}/>
+                  <Input id='restaurant_name' placeholder="Nome do restaurante" type="text" required {...register('restaurant_name')}/>
                 </div>
                 <div className="space-y-2">
                   <Label  htmlFor='' />
@@ -68,7 +82,7 @@ export function SignUp(){
                 </div>
                 <div className="space-y-2">
                   <Label  htmlFor='' />
-                  <Input id='managerName' placeholder="Nome do Gestor" type="text" required {...register('managerName')}/>
+                  <Input id='managerName' placeholder="Nome do Gestor" type="text" required {...register('name')}/>
                 </div>
                 <div className="space-y-2">
                   <Label  htmlFor='' />

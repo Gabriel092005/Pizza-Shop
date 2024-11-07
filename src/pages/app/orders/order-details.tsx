@@ -3,12 +3,40 @@ import { Dialog, DialogContent, DialogTrigger } from "../../../components/ui/dia
 import { Search } from "lucide-react";
 import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useQuery } from "@tanstack/react-query";
+import { getOrderDetail } from "@/api/get-order-details";
+import { useState } from "react";
+import {formatDistanceToNow} from 'date-fns'
+import {ptBR} from 'date-fns/locale'
 
 
 
-export function OrderDetails(){
+
+
+
+export interface OrdersDetailsProps{
+    orderId:string
+    // open:boolean
+}
+
+export function OrderDetails({orderId}:OrdersDetailsProps){
+
+    const [isDetailsOpen,setIsDetailsOpen]=useState(false)
+
+    const {data:order} = useQuery({
+
+        queryKey:['order',orderId],
+        queryFn:()=>getOrderDetail({orderId}),
+
+    })
+    if(!order){
+        return
+    }
+
+
+
     return(
-        <Dialog>
+        <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
         <DialogTrigger asChild>
         <Button size="sm" variant='outline'>
         <Search className=" h-3 w-3"/>
@@ -16,7 +44,7 @@ export function OrderDetails(){
       </Button>
         </DialogTrigger>
         <DialogContent>
-            <DialogTitle>Pedido: fghio2u3uu</DialogTitle>
+            <DialogTitle>Pedido: {order.orderId}</DialogTitle>
             <DialogDescription>Detalhes do Pedido</DialogDescription>
             <div className="space-y-6">
                 <Table>
@@ -24,7 +52,7 @@ export function OrderDetails(){
                         <TableCell className="text-muted-foreground">
                         <div className=" flex items-center gap-2">
                                     <span className="h-2 w-2 rounded-full bg-slate-400"/>
-                                    <span className="font-medium text-muted-foreground">Pendente</span>
+                                    <span className="font-medium text-muted-foreground">{order.status}</span>
                                 </div>
                         </TableCell>
                         <TableCell>status</TableCell>
@@ -33,14 +61,13 @@ export function OrderDetails(){
                         <TableCell>
                         <div className=" flex items-center gap-2">
                                     <span className="h-2 w-2 rounded-full bg-slate-400"/>
-                                    <span className="font-medium text-muted-foreground">Gabriel Manuel</span>
+                                    <span className="font-medium text-muted-foreground">{order.costumerName}</span>
                                 </div>
                         </TableCell>
                         <TableCell className="text-muted-foreground">
                             Cliente
                         </TableCell>
                     </TableRow>
-
                     <TableRow>
                         <TableCell>
                         <div className=" flex items-center gap-2">
@@ -52,7 +79,6 @@ export function OrderDetails(){
                             (+244) 931 120 510
                         </TableCell>
                     </TableRow>
-
                     <TableRow>
                         <TableCell>
                         <div className=" flex items-center gap-2">
@@ -64,16 +90,19 @@ export function OrderDetails(){
                             Email
                         </TableCell>
                     </TableRow>
-
                     <TableRow>
                         <TableCell>
                         <div className=" flex items-center gap-2">
                                     <span className="h-2 w-2 rounded-full bg-slate-400"/>
                                     <span className="font-medium text-muted-foreground">Realizado há</span>
-                                </div>
+                         </div>
                         </TableCell>
                         <TableCell className="text-muted-foreground">
-                            há 3 minutos
+                               { formatDistanceToNow(order.created_at,{
+                                locale:ptBR,
+                                addSuffix:true
+                               })}
+                              
                         </TableCell>
                     </TableRow>
                     
@@ -103,3 +132,4 @@ export function OrderDetails(){
     </Dialog>
     )
 }
+

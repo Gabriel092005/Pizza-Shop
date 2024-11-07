@@ -1,5 +1,4 @@
 import {createBrowserRouter} from 'react-router-dom'
-
 import { AppLayout } from './pages/_layouts/app'
 import { SignIn } from './pages/auth/Sign-in'
 import { AuthLayout } from './pages/_layouts/auth'

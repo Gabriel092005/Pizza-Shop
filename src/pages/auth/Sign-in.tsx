@@ -4,7 +4,9 @@ import { Label } from "@radix-ui/react-label";
 import { useForm} from 'react-hook-form'
 import {z} from 'zod'
 import {toast} from'sonner'
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { signIn } from "@/api/sign-in";
 
 const SignInForm =z.object({
     email:z.string().email()
@@ -14,14 +16,26 @@ type SignInFormInputs = z.infer< typeof SignInForm>
 
 
 export function SignIn(){
-   const { register, handleSubmit ,reset, formState:{isSubmitting}} = useForm<SignInFormInputs>()
+
+  const [searchParams]= useSearchParams()
+
+   const { register, handleSubmit ,reset, formState:{isSubmitting}} = useForm<SignInFormInputs>({
+      defaultValues:{
+         email:searchParams.get('email') ?? ''
+      }
+   })
+   
+   const { mutateAsync: authenticate} = useMutation({
+    mutationFn : signIn
+   })
+
+   //mutetionFunction é basicamente qual função vai ser disparada
+   //todo POST,PUT,DELETE E UMA MUTACAO JA O GET E UMA QUERY
 
    async function handleSignIn(data:SignInFormInputs)
     {
-        
-        
         try{
-        
+        await authenticate({email:data.email})
         toast.success('Enviamos um Link de autenticação',{
             action:{
                 label:'Reenviar',

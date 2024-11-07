@@ -2,6 +2,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "../ui/button"
 
 export  interface PaginationProps{
+    
     pageIndex:number
     totalCount:number
     perPage:number
